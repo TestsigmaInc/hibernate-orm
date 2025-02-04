@@ -451,11 +451,6 @@ public class EntityInitializerImpl extends AbstractInitializer<EntityInitializer
 			if ( fkKeyValue != null ) {
 				if ( notFoundAction != NotFoundAction.IGNORE ) {
 					if ( affectedByFilter ) {
-						throw new EntityFilterException(
-								getEntityDescriptor().getEntityName(),
-								fkKeyValue,
-								referencedModelPart.getNavigableRole().getFullPath()
-						);
 					}
 					throw new FetchNotFoundException(
 							getEntityDescriptor().getEntityName(),
