@@ -260,13 +260,6 @@ public abstract class AbstractBatchEntitySelectFetchInitializer<Data extends Abs
 		);
 		if ( instance == null ) {
 			if ( toOneMapping.getNotFoundAction() != NotFoundAction.IGNORE ) {
-				if ( affectedByFilter ) {
-					throw new EntityFilterException(
-							entityKey.getEntityName(),
-							entityKey.getIdentifier(),
-							toOneMapping.getNavigableRole().getFullPath()
-					);
-				}
 				if ( toOneMapping.getNotFoundAction() == NotFoundAction.EXCEPTION ) {
 					throw new FetchNotFoundException( entityKey.getEntityName(), entityKey.getIdentifier() );
 				}

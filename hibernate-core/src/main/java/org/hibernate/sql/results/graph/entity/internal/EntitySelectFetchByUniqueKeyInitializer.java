@@ -64,13 +64,6 @@ public class EntitySelectFetchByUniqueKeyInitializer extends EntitySelectFetchIn
 
 			if ( instance == null ) {
 				if ( toOneMapping.getNotFoundAction() != NotFoundAction.IGNORE ) {
-					if ( affectedByFilter ) {
-						throw new EntityFilterException(
-								entityName,
-								data.entityIdentifier,
-								toOneMapping.getNavigableRole().getFullPath()
-						);
-					}
 					if ( toOneMapping.getNotFoundAction() == NotFoundAction.EXCEPTION ) {
 						throw new FetchNotFoundException( entityName, data.entityIdentifier );
 					}
