@@ -24,6 +24,7 @@ import org.jboss.logging.Logger;
 
 import java.util.Iterator;
 
+import static java.util.Collections.emptySet;
 import static org.hibernate.engine.internal.ForeignKeys.isTransient;
 import static org.hibernate.engine.internal.ManagedTypeHelper.isHibernateProxy;
 
@@ -378,31 +379,19 @@ public class CascadingActions {
 				boolean isCascadeDeleteEnabled)
 				throws HibernateException {
 			if ( child != null
-					// a proxy is always non-transient
-					// and ForeignKeys.isTransient()
-					// is not written to expect a proxy
-					&& !isHibernateProxy( child )
-					// if it's associated with the session
-					// we are good, even if it's not yet
-					// inserted, since ordering problems
-					// are detected and handled elsewhere
 					&& !isInManagedState( child, session )
-					// TODO: check if it is a merged entity which has not yet been flushed
-					// Currently this throws if you directly reference a new transient
-					// instance after a call to merge() that results in its managed copy
-					// being scheduled for insertion, if the insert has not yet occurred.
-					// This is not terrible: it's more correct to "swap" the reference to
-					// point to the managed instance, but it's probably too heavy-handed.
-					&& isTransient( entityName, child, null, session ) ) {
-				throw new TransientObjectException( "persistent instance references an unsaved transient instance of '"
-						+ entityName + "' (save the transient instance before flushing)" );
-				//TODO: should be TransientPropertyValueException
-//				throw new TransientPropertyValueException(
-//						"object references an unsaved transient instance - save the transient instance before flushing",
-//						entityName,
-//						persister.getEntityName(),
-//						persister.getPropertyNames()[propertyIndex]
-//				);
+					&& !isHibernateProxy( child ) ) { //a proxy cannot be transient and it breaks ForeignKeys.isTransient
+				if ( isTransient( entityName, child, null, session ) ) {
+					//TODO: should be TransientPropertyValueException
+					throw new TransientObjectException( "persistent instance references an unsaved transient instance of '"
+							+ entityName + "' (save the transient instance before flushing)" );
+//					throw new TransientPropertyValueException(
+//							"object references an unsaved transient instance - save the transient instance before flushing",
+//							entityName,
+//							persister.getEntityName(),
+//							persister.getPropertyNames()[propertyIndex]
+//					);
+				}
 			}
 		}
 
@@ -411,7 +400,7 @@ public class CascadingActions {
 				EventSource session,
 				CollectionType collectionType,
 				Object collection) {
-			return getLoadedElementsIterator( session, collectionType, collection );
+			return emptySet().iterator();
 		}
 
 		@Override
@@ -520,7 +509,7 @@ public class CascadingActions {
 			return collectionType.getElementsIterator( collection );
 		}
 		else {
-			// does not handle arrays (that's ok, cos they can't be lazy)
+			// does not handle arrays (thats ok, cos they can't be lazy)
 			// or newly instantiated collections, so we can do the cast
 			return ((PersistentCollection<?>) collection).queuedAdditionIterator();
 		}

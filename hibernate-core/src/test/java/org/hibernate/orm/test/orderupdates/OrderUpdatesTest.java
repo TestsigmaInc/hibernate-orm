@@ -59,16 +59,14 @@ public class OrderUpdatesTest {
 					Child child1 = new Child();
 					child1.setName( "name1" );
 					child1.setValue( "value" );
-					child1.setParent( parent1 );
-					child1 = session.merge( child1 );
 					parent1.addChild( child1 );
+					child1 = session.merge( child1 );
 
 					Child child2 = new Child();
 					child2.setName( "name1" );
 					child2.setValue( "value" );
-					child2.setParent( parent2 );
-					child2 = session.merge( child2 );
 					parent2.addChild( child2 );
+					child2 = session.merge( child2 );
 
 					session.flush();
 
