@@ -24,7 +24,6 @@ import org.jboss.logging.Logger;
 
 import java.util.Iterator;
 
-import static java.util.Collections.emptyIterator;
 import static org.hibernate.engine.internal.ForeignKeys.isTransient;
 import static org.hibernate.engine.internal.ManagedTypeHelper.isHibernateProxy;
 
@@ -412,17 +411,7 @@ public class CascadingActions {
 				EventSource session,
 				CollectionType collectionType,
 				Object collection) {
-			if ( collectionType.isInverse( session.getSessionFactory() ) ) {
-				// For now, don't throw when an unowned collection
-				// contains references to transient/deleted objects.
-				// Strictly speaking, we should throw: but it just
-				// feels a bit too heavy-handed, especially in the
-				// case where the entity isn't transient but removed.
-				return emptyIterator();
-			}
-			else {
-				return getLoadedElementsIterator( session, collectionType, collection );
-			}
+			return getLoadedElementsIterator( session, collectionType, collection );
 		}
 
 		@Override
