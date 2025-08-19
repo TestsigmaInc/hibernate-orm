@@ -307,6 +307,25 @@ tasks.named( "javadoc", Javadoc ) {
     }
 }
 
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/TestsigmaInc/hibernate-orm")
+            credentials {
+                username = project.findProperty("github.user")
+                password = project.findProperty("github.token")
+            }
+        }
+    }
+}
+
 tasks.sourcesJar.dependsOn ':hibernate-core:generateGraphParser'
 tasks.sourcesJar.dependsOn ':hibernate-core:generateHqlParser'
 tasks.sourcesJar.dependsOn ':hibernate-core:generateSqlScriptParser'
