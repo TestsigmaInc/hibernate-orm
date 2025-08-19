@@ -22,4 +22,4 @@ jobs:
       - name: Publish package
         run: |
           ./gradlew hibernate-core:clean
-          ./gradlew hibernate-core:publish -Pgithub.user=${{ github.actor }} -Pgithub.token=${{ secrets.GITHUB_TOKEN }}
+          ./gradlew hibernate-core:publish -Pgithub.user=${{ github.actor }} -Pgithub.token=${{ secrets.GITHUB_TOKEN }}  --no-build-cache
