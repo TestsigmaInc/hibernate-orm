@@ -1,0 +1,25 @@
+name: Publish Java Package
+
+on:
+  workflow_dispatch:
+
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java version 11 (for building custom hibernate)
+        uses: actions/setup-java@v4
+        with:
+          java-version: "11"
+          distribution: "zulu"
+
+      - name: Publish package
+        run: |
+          ./gradlew hibernate-core:clean
+          ./gradlew hibernate-core:publish -Pgithub.user=${{ github.actor }} -Pgithub.token=${{ secrets.GITHUB_TOKEN }}
