@@ -398,17 +398,12 @@ public class CascadingActions {
 				EventSource session,
 				CollectionType collectionType,
 				Object collection) {
-			if ( collectionType.isInverse( session.getSessionFactory() ) ) {
-				// For now, don't throw when an unowned collection
-				// contains references to transient/deleted objects.
-				// Strictly speaking, we should throw: but it just
-				// feels a bit too heavy-handed, especially in the
-				// case where the entity isn't transient but removed.
-				return emptyIterator();
-			}
-			else {
-				return getLoadedElementsIterator( collectionType, collection );
-			}
+			// Testsigma fork: skip the flush-time transient check for every collection,
+			// owned as well as unowned. Upstream only skips unowned ones, and the
+			// hibernate.unowned_association_transient_check setting does not widen that.
+			// Dropping this makes a parent holding an unsaved child in an owned
+			// collection throw at flush, which the 6.6 fork did not do.
+			return emptyIterator();
 		}
 
 		@Override
