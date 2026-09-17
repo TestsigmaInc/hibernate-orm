@@ -6,7 +6,6 @@ package org.hibernate.sql.results.graph.entity.internal;
 
 import java.util.function.BiConsumer;
 
-import org.hibernate.EntityFilterException;
 import org.hibernate.FetchNotFoundException;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.NotFoundAction;
@@ -283,10 +282,9 @@ public class EntitySelectFetchInitializer<Data extends EntitySelectFetchInitiali
 			String entityName, Object identifier) {
 		final var notFoundAction = toOneMapping.getNotFoundAction();
 		if ( notFoundAction != NotFoundAction.IGNORE ) {
-			if ( affectedByFilter ) {
-				throw new EntityFilterException( entityName, identifier,
-						toOneMapping.getNavigableRole().getFullPath() );
-			}
+			// Testsigma fork: a row hidden by an enabled @Filter is not an error here.
+			// Upstream throws EntityFilterException; we fall through to the not-found
+			// handling so filtered-out references behave the same as missing ones.
 			if ( notFoundAction == NotFoundAction.EXCEPTION ) {
 				throw new FetchNotFoundException( entityName, identifier );
 			}
