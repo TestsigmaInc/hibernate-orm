@@ -9,7 +9,6 @@ import java.util.BitSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
-import org.hibernate.EntityFilterException;
 import org.hibernate.FetchNotFoundException;
 import org.hibernate.Hibernate;
 import org.hibernate.LockMode;
@@ -814,11 +813,10 @@ public class EntityInitializerImpl
 			final Object foreignKeyValue = keyAssembler.assemble( data.getRowProcessingState() );
 			if ( foreignKeyValue != null ) {
 				if ( notFoundAction != NotFoundAction.IGNORE ) {
+					// Testsigma fork: a row hidden by an enabled @Filter is not an error here.
+					// Upstream throws EntityFilterException; we fall through to the not-found
+					// handling so filtered-out references behave the same as missing ones.
 					final String entityName = getEntityDescriptor().getEntityName();
-					if ( affectedByFilter ) {
-						throw new EntityFilterException( entityName, foreignKeyValue,
-								referencedModelPart.getNavigableRole().getFullPath() );
-					}
 					throw new FetchNotFoundException( entityName, foreignKeyValue );
 				}
 			}
