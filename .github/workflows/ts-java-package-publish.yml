@@ -12,11 +12,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Hibernate 7 needs JDK 17 or newer to build; the 6.6 fork used JDK 11.
-      - name: Setup Java 21
+      # Hibernate 7.2 enforces a JDK 25 floor through its own jdks-settings plugin
+      # (the 6.6 fork used JDK 11, and JDK 21 fails the build before it resolves a
+      # single dependency). The published artifact still targets the release level
+      # the build sets, so consumers on Java 21 are unaffected.
+      - name: Setup Java 25
         uses: actions/setup-java@v4
         with:
-          java-version: "21"
+          java-version: "25"
           distribution: "zulu"
 
       - name: Publish package
