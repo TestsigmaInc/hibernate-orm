@@ -129,7 +129,11 @@ public abstract class AbstractFlushingEventListener {
 				cascadeOnFlush( session, entityEntry.getPersister(), entry.getKey(), context );
 			}
 		}
-		checkForTransientReferences( session, persistenceContext );
+		// Testsigma fork: the 6.6 fork never ran this check - upstream added the call here,
+		// and it throws for a to-one that points at an entity this application deletes
+		// through a vetoing PreDeleteEventListener, which writes a versioned copy instead.
+		// The collection half of the same check is already suppressed in CascadingActions.
+		// checkForTransientReferences( session, persistenceContext );
 	}
 
 	void checkForTransientReferences(EventSource session, PersistenceContext persistenceContext) {
